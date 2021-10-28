@@ -14,12 +14,14 @@ import {
   Stack, Input, Image,
   SimpleGrid,
   GridItem, Text,
+  Container,
   Link,
   useColorMode, useToast
 } from "@chakra-ui/react";
 import { AiOutlineMenu } from "react-icons/ai";
 import { FaMoon, FaSun, FaHeart } from "react-icons/fa";
 import { Logo } from "@choc-ui/logo";
+import { FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
 
 
 export default function App() {
@@ -115,7 +117,7 @@ export default function App() {
         });
 
         setNetworth(xnetworth);
-        setUsdworth(xnetworth*ethRate);
+        setUsdworth(xnetworth * ethRate);
         setPortfolio(portfolio);
 
         console.log(portfolio);
@@ -123,7 +125,38 @@ export default function App() {
       .catch(err => console.log(err));
 
   }
+ 
 
+  const SocialButton = ({
+    children,
+    label,
+    href,
+  }: {
+    children: ReactNode;
+    label: string;
+    href: string;
+  }) => {
+    return (
+      <chakra.button
+        bg={useColorModeValue('blackAlpha.100', 'whiteAlpha.100')}
+        rounded={'full'}
+        w={8}
+        h={8}
+        cursor={'pointer'}
+        as={'a'}
+        href={href}
+        display={'inline-flex'}
+        alignItems={'center'}
+        justifyContent={'center'}
+        transition={'background 0.3s ease'}
+        _hover={{
+          bg: useColorModeValue('blackAlpha.200', 'whiteAlpha.200'),
+        }}>
+        <VisuallyHidden>{label}</VisuallyHidden>
+        {children}
+      </chakra.button>
+    );
+  };
 
   const Feature = (props) => {
     return (
@@ -233,7 +266,7 @@ export default function App() {
             <Flex align="center">
               <Link href="/">
                 <HStack>
-                  <Logo />
+                  <Logo color="#14e60c"/>
                   <chakra.h1
                     mb={3}
                     fontSize={{ base: "2xl", md: "3xl" }}
@@ -309,7 +342,7 @@ export default function App() {
               mb={8}
             >
               <GridItem as="label" colSpan={{ base: "auto", lg: 4 }}>
-                 <Input
+                <Input
                   mt={0}
                   size="lg"
                   type="text"
@@ -448,6 +481,54 @@ export default function App() {
               </GridItem>
             </SimpleGrid>
           </Box>))}
+
+          <Box
+          mb={0}
+      bg={useColorModeValue('gray.50', 'gray.900')}
+      color={useColorModeValue('gray.700', 'gray.200')}>
+      <Container
+        as={Stack}
+        maxW={'6xl'}
+        py={4}
+        spacing={4}
+        justify={'center'}
+        align={'center'}>
+        <Logo />
+        <Stack direction={'row'} spacing={6}>
+          <Link href={'#'}>Home</Link>
+          <Link href={'#'}>About</Link>
+          <Link href={'#'}>Blog</Link>
+          <Link href={'#'}>Contact</Link>
+        </Stack>
+      </Container>
+
+      <Box
+        borderTopWidth={1}
+        borderStyle={'solid'}
+        borderColor={useColorModeValue('gray.200', 'gray.700')}>
+        <Container
+          as={Stack}
+          maxW={'6xl'}
+          py={4}
+          direction={{ base: 'column', md: 'row' }}
+          spacing={4}
+          justify={{ base: 'center', md: 'space-between' }}
+          align={{ base: 'center', md: 'center' }}>
+          <Text>© 2020 ElloInc. All rights reserved</Text>
+          <Stack direction={'row'} spacing={6}>
+            <SocialButton label={'Twitter'} href={'#'}>
+              <FaTwitter />
+            </SocialButton>
+            <SocialButton label={'YouTube'} href={'#'}>
+              <FaYoutube />
+            </SocialButton>
+            <SocialButton label={'Instagram'} href={'#'}>
+              <FaInstagram />
+            </SocialButton>
+          </Stack>
+        </Container>
+      </Box>
+    </Box>
     </Box>
   );
 }
