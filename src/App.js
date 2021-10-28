@@ -314,7 +314,7 @@ export default function App() {
             size="lg"
             type="submit"
             onClick={()=>fetchData()}
-            colorScheme="green"
+            bg="#14e60c"
             cursor="pointer"
           >
             Go
