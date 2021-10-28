@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   chakra,
   Box,
@@ -11,19 +11,17 @@ import {
   useDisclosure,
   VStack,
   IconButton,
-  Stack,Input ,Image,
+  Stack, Input, Image,
   SimpleGrid,
-  GridItem, 
+  GridItem, Text,
   Link,
-  useColorMode, useToast 
+  useColorMode, useToast
 } from "@chakra-ui/react";
-import { AiOutlineMenu } from "react-icons/ai"; 
+import { AiOutlineMenu } from "react-icons/ai";
 import { FaMoon, FaSun, FaHeart } from "react-icons/fa";
-import * as Web3 from 'web3'
-import { OpenSeaPort, Network } from 'opensea-js'
 import { Logo } from "@choc-ui/logo";
 
- 
+
 export default function App() {
 
   const bg = useColorModeValue("white", "gray.800");
@@ -34,37 +32,48 @@ export default function App() {
   const [ownerAddress, setOwnerAddress] = useState();
   const [portfolio, setPortfolio] = useState([]);
 
-  const [offset, setOffset] = useState(0); 
- 
-  const mobileNav = useDisclosure(); 
+  const [offset, setOffset] = useState(0);
+  const [ethRate, setEthRate] = useState();
+  const [networth, setNetworth] = useState();
+  const [usdworth, setUsdworth] = useState();
+
+  const mobileNav = useDisclosure();
   const { toggleColorMode: toggleMode } = useColorMode();
   const text = useColorModeValue("dark", "light");
   const SwitchIcon = useColorModeValue(FaMoon, FaSun);
- 
+
+
+  useEffect(() => {
+    fetch("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD")
+      .then(response => response.json())
+      // 4. Setting *dogImage* to the image url that we received from the response above
+      .then(data => setEthRate(data.USD))
+  }, [])
+
 
   const setOwner = event => {
     setOwnerAddress(event.target.value);
     console.log(ownerAddress)
   };
 
-  
-  const toast = useToast() 
- 
+
+  const toast = useToast()
+
   function fieldError(msg) {
     toast({
-       render: () => (
+      render: () => (
         <Box color="white" p={3} bg="red.500">
-         {msg}
+          {msg}
         </Box>
       ),
     })
   }
 
 
-  const fetchData = async () => { 
+  const fetchData = async () => {
 
     setPortfolio([]);
-    if(ownerAddress=== undefined || ownerAddress===''){
+    if (ownerAddress === undefined || ownerAddress === '') {
       fieldError('Please enter Owner Address');
       return;
     }
@@ -75,42 +84,46 @@ export default function App() {
     const params = { asset_owner: ownerAddress, offset, limit };
 
     Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
- 
+
     fetch(url, options)
       .then(response => response.json())
       .then(response => {
-        const data = response; 
-        console.log(data); 
+        const data = response;
+        console.log(data);
 
-        if(data==='Not valid address'){
+        if (data === 'Not valid address') {
           fieldError(data);
           return;
         }
 
-        portfolio.splice(0, portfolio.length); 
-
-        data.forEach(function(item) {
+        portfolio.splice(0, portfolio.length);
+        var xnetworth = 0;
+        data.forEach(function (item) {
           console.log(item);
 
           portfolio.push({
-            id:item.address,
-            name:item.name,
+            id: item.address,
+            name: item.name,
             assetCount: item.owned_asset_count,
-            floorValue:item.stats.floor_price,
-            total : item.stats.floor_price*item.owned_asset_count,
-            imageurl:item.image_url
+            floorValue: item.stats.floor_price,
+            total: item.stats.floor_price * item.owned_asset_count,
+            imageurl: item.image_url
           })
-        
+
+          xnetworth += item.stats.floor_price * item.owned_asset_count;
+
         });
 
+        setNetworth(xnetworth);
+        setUsdworth(xnetworth*ethRate);
         setPortfolio(portfolio);
- 
+
         console.log(portfolio);
       })
-      .catch(err =>  console.log(err)); 
+      .catch(err => console.log(err));
 
   }
- 
+
 
   const Feature = (props) => {
     return (
@@ -147,7 +160,7 @@ export default function App() {
       </Flex>
     );
   };
-  
+
   const SponsorButton = (
     <Box
       display={{ base: "none", md: "flex" }}
@@ -200,7 +213,7 @@ export default function App() {
       spacing={3}
       rounded="sm"
       shadow="sm"
-    > 
+    >
     </VStack>
   );
   return (
@@ -240,7 +253,7 @@ export default function App() {
               maxW="824px"
               align="center"
               color="gray.400"
-            > 
+            >
               <IconButton
                 size="md"
                 fontSize="lg"
@@ -266,140 +279,175 @@ export default function App() {
           {MobileNavContent}
         </chakra.div>
       </chakra.header>
-      <Flex 
-          p={5} 
-          justifyContent="center"
-          alignItems="center"
-        >
-      <Box px={4} py={2} mx="auto">
-      <Box
-        w={{ base: "full", md: 11 / 12, xl: 8 / 12 }}
-        textAlign={{ base: "left", md: "center" }}
-        mx="auto"
+      <Flex
+        p={5}
+        justifyContent="center"
+        alignItems="center"
       >
-        <chakra.h1
-          mb={3}
-          fontSize={{ base: "4xl", md: "5xl" }}
-          fontWeight={{ base: "bold", md: "extrabold" }}
-          color={useColorModeValue("gray.900", "gray.100")}
-          lineHeight="shorter"
-        >
-          Find the total floor value of your OpenSea portfolio 
-        </chakra.h1> 
-        <SimpleGrid
-          as="form"
-          w={{ base: "full", md: 7 / 12 }}
-          columns={{ base: 1, lg: 6 }}
-          spacing={3}
-          pt={1}
-          mx="auto"
-          mb={8}
-        >
-          <GridItem as="label" colSpan={{ base: "auto", lg: 4 }}>
-            <VisuallyHidden>Your Email</VisuallyHidden>
-            <Input
-              mt={0}
-              size="lg"
-              type="text"
-              name='setOwner'
-              placeholder="Enter your wallet address..." 
-              onChange={setOwner}
-            />
-          </GridItem>
-          <Button
-            as={GridItem}
-            w="full"
-            variant="solid"
-            colSpan={{ base: "auto", lg: 2 }}
-            size="lg"
-            type="submit"
-            onClick={()=>fetchData()}
-            bg="#14e60c"
-            cursor="pointer"
+        <Box px={4} py={2} mx="auto">
+          <Box
+            w={{ base: "full", md: 11 / 12, xl: 8 / 12 }}
+            textAlign={{ base: "left", md: "center" }}
+            mx="auto"
           >
-            Go
-          </Button>
-        </SimpleGrid> 
-      </Box>
-    </Box>
+            <chakra.h1
+              mb={3}
+              fontSize={{ base: "4xl", md: "5xl" }}
+              fontWeight={{ base: "bold", md: "extrabold" }}
+              color={useColorModeValue("gray.900", "gray.100")}
+              lineHeight="shorter"
+            >
+              Find the total floor value of your OpenSea portfolio
+            </chakra.h1>
+            <SimpleGrid
+              as="form"
+              w={{ base: "full", md: 7 / 12 }}
+              columns={{ base: 1, lg: 6 }}
+              spacing={3}
+              pt={1}
+              mx="auto"
+              mb={8}
+            >
+              <GridItem as="label" colSpan={{ base: "auto", lg: 4 }}>
+                 <Input
+                  mt={0}
+                  size="lg"
+                  type="text"
+                  name='setOwner'
+                  placeholder="Enter your wallet address..."
+                  onChange={setOwner}
+                />
+              </GridItem>
+              <Button
+                as={GridItem}
+                w="full"
+                variant="solid"
+                colSpan={{ base: "auto", lg: 2 }}
+                size="lg"
+                type="submit"
+                onClick={() => fetchData()}
+                bg="#14e60c"
+                cursor="pointer"
+              >
+                Go
+              </Button>
+            </SimpleGrid>
+          </Box>
+        </Box>
+
       </Flex>
-      
-      {portfolio &&
-                    portfolio.length > 0 &&
-                    portfolio.slice().map(item => ( 
-    <Box
-        shadow="xl" 
+      <Flex justifyContent="space-between"
+        shadow="xl"
         maxW={960}
         px={8}
-        py={5} 
+        py={5}
         mx="auto"
-        borderRadius={15} 
-        key={item.id}
+        borderRadius={15}
       >
-        <chakra.h2
+        <HStack spacing={3} display={{ base: "none", md: "inline-flex" }}>
+          <chakra.h1
+            mb={3}
+            fontSize={{ base: "1xl", md: "2xl" }}
+            fontWeight={{ base: "bold", md: "extrabold" }}
+            color={useColorModeValue("gray.900", "gray.100")}
+            lineHeight="shorter"
+          >
+            Net {usdworth} USD
+          </chakra.h1>
+        </HStack>
+        <HStack
+          spacing={3}
+          display={mobileNav.isOpen ? "none" : "flex"}
+          alignItems="center"
+        >
+          <chakra.h1
+            mb={3}
+            fontSize={{ base: "1xl", md: "2xl" }}
+            fontWeight={{ base: "bold", md: "extrabold" }}
+            color={useColorModeValue("gray.900", "gray.100")}
+            lineHeight="shorter"
+          >
+            Net {networth} ETH
+          </chakra.h1>
+        </HStack>
+      </Flex>
+
+      {portfolio &&
+        portfolio.length > 0 &&
+        portfolio.slice().map(item => (
+          <Box
+            shadow="xl"
+            maxW={960}
+            px={8}
+            py={5}
+            mx="auto"
+            borderRadius={15}
+            key={item.id}
+          >
+            <chakra.h2
               mb={3}
               fontSize={{ base: "1xl", md: "2xl" }}
               fontWeight="extrabold"
-              textAlign={{ base: "center", sm: "left" }} 
+              textAlign={{ base: "center", sm: "left" }}
               lineHeight="shorter"
               letterSpacing="tight"
             >
               {item.name}
             </chakra.h2>
-        <SimpleGrid
-          alignItems="center"
-          columns={{ base: 1, lg: 4 }}
-          spacingY={{ base: 3, lg: 8 }}
-          spacingX={{ base: 3, lg: 8 }}
-        >
-          <Box alignSelf="start"> 
-            <Image   src={item.imageurl} />
-          </Box>
-          <GridItem colSpan={3}>
-            <Stack
-              spacing={{ base: 10, md: 0 }}
-              display={{ md: "grid" }}
-              gridTemplateColumns={{ md: "repeat(3,1fr)" }}
-              gridColumnGap={{ md: 8 }}
-              gridRowGap={{ md: 10 }}
+            <SimpleGrid
+              alignItems="center"
+              columns={{ base: 1, lg: 4 }}
+              spacingY={{ base: 3, lg: 8 }}
+              spacingX={{ base: 3, lg: 8 }}
             >
-              <Feature title="Asset Count">
-                <chakra.h4
-                  mb={3}
-                  fontWeight="extrabold"
-                  textAlign={{ base: "center", sm: "left" }} 
-                  lineHeight="shorter"
-                  letterSpacing="tight"
+              <Box alignSelf="start">
+                <Image src={item.imageurl} />
+              </Box>
+              <GridItem colSpan={3}>
+                <Stack
+                  spacing={{ base: 10, md: 0 }}
+                  display={{ md: "grid" }}
+                  gridTemplateColumns={{ md: "repeat(3,1fr)" }}
+                  gridColumnGap={{ md: 8 }}
+                  gridRowGap={{ md: 10 }}
                 >
-                  {item.assetCount}
-                </chakra.h4>
-              </Feature>
-              <Feature title="Floor Price">
-                <chakra.h4
-                  mb={3}
-                  fontWeight="extrabold"
-                  textAlign={{ base: "center", sm: "left" }} 
-                  lineHeight="shorter"
-                  letterSpacing="tight"
-                >
-                  {item.floorValue} ETH
-                </chakra.h4>
-              </Feature>
-              <Feature title="Total Value">
-                <chakra.h4
-                  mb={3}
-                  fontWeight="extrabold"
-                  textAlign={{ base: "center", sm: "left" }} 
-                  lineHeight="shorter"
-                  letterSpacing="tight"
-                >
-                  {item.total} ETH
-                </chakra.h4>
-              </Feature> 
-            </Stack>
-          </GridItem>
-        </SimpleGrid>
-      </Box> ))} 
+                  <Feature title="Asset Count">
+                    <chakra.h4
+                      mb={3}
+                      fontWeight="extrabold"
+                      textAlign={{ base: "center", sm: "left" }}
+                      lineHeight="shorter"
+                      letterSpacing="tight"
+                    >
+                      {item.assetCount}
+                    </chakra.h4>
+                  </Feature>
+                  <Feature title="Floor Price">
+                    <chakra.h4
+                      mb={3}
+                      fontWeight="extrabold"
+                      textAlign={{ base: "center", sm: "left" }}
+                      lineHeight="shorter"
+                      letterSpacing="tight"
+                    >
+                      {item.floorValue} ETH
+                    </chakra.h4>
+                  </Feature>
+                  <Feature title="Total Value">
+                    <chakra.h4
+                      mb={3}
+                      fontWeight="extrabold"
+                      textAlign={{ base: "center", sm: "left" }}
+                      lineHeight="shorter"
+                      letterSpacing="tight"
+                    >
+                      {item.total} ETH
+                    </chakra.h4>
+                  </Feature>
+                </Stack>
+              </GridItem>
+            </SimpleGrid>
+          </Box>))}
     </Box>
   );
 }
