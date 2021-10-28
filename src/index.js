@@ -1,12 +1,39 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+import "@fontsource/poppins/700.css"
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const colors = {
+  brand: {
+    50: "#ecefff",
+    100: "#cbceeb",
+    200: "#a9aed6",
+    300: "#888ec5",
+    400: "#666db3",
+    500: "#14e60c",
+    600: "#3c4178",
+    700: "#2a2f57",
+    800: "#181c37",
+    900: "#080819"
+  }
+};
+const config = {
+  initialColorMode: "dark",
+  useSystemColorMode: false,
+  fonts: {
+    heading: "Poppins",
+    body: "Poppins",
+  },
+};
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+const theme = extendTheme({ colors, config });
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(
+  <ChakraProvider theme={theme}>
+    <App />
+  </ChakraProvider>,
+  rootElement
+);
+
