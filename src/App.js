@@ -340,8 +340,6 @@ export default function App() {
                 w="full"
                 bgClip="text"
                 color="white.500" 
-                textDecoration="underline"
-                textDecorationColor="red.500"
                 fontWeight="bold"
                 >
                   OpenSea
