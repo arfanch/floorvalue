@@ -19,10 +19,12 @@ import {
   useColorMode, useToast
 } from "@chakra-ui/react";
 import { AiOutlineMenu } from "react-icons/ai";
-import { FaMoon, FaSun, FaHeart } from "react-icons/fa";
+import { FaMoon, FaSun, FaHeart, FaFire, FaCoffee, FaBars, FaDollarSign } from "react-icons/fa";
 import { Logo } from "@choc-ui/logo";
 import { FaInstagram, FaTwitter, FaYoutube } from 'react-icons/fa';
-
+import { 
+	TwitterShareButton 
+} from 'react-share';
 
 export default function App() {
 
@@ -59,6 +61,13 @@ export default function App() {
   };
 
 
+
+  const getTitle=(networth,usdworth)=>( 
+
+   'Just checked my NFT Portfolio Value on https://floorvalue.co. It’s currently '+networth+' ETH and '+usdworth+' USD. What’s yours?'
+  )
+
+
   const toast = useToast()
 
   function fieldError(msg) {
@@ -71,6 +80,13 @@ export default function App() {
     })
   }
 
+  const socialConfig={
+          twitterHandle:"@livingpixelated",
+          config: {
+            url: "https://floorvalue.co",
+            title:"",
+          },
+        }
 
   const fetchData = async () => {
 
@@ -116,8 +132,9 @@ export default function App() {
 
         });
 
-        setNetworth(xnetworth);
-        setUsdworth(xnetworth * ethRate);
+ 
+        setNetworth((Math.round(xnetworth  * 1000) / 1000).toFixed(3));
+        setUsdworth((Math.round(xnetworth * ethRate * 100) / 100).toFixed(2));
         setPortfolio(portfolio);
 
         console.log(portfolio);
@@ -131,10 +148,6 @@ export default function App() {
     children,
     label,
     href,
-  }: {
-    children: ReactNode;
-    label: string;
-    href: string;
   }) => {
     return (
       <chakra.button
@@ -200,7 +213,7 @@ export default function App() {
       alignItems="center"
       as="a"
       aria-label="Sponsor Choc UI on Open Collective"
-      href={""}
+      href={"https://twitter.com/messages/compose?recipient_id=16984407"}
       target="_blank"
       rel="noopener noreferrer"
       bg="gray.50"
@@ -274,7 +287,7 @@ export default function App() {
                     color={useColorModeValue("gray.900", "gray.100")}
                     lineHeight="shorter"
                   >
-                    Nft Folio
+                    FloorValue.co
                   </chakra.h1>
                 </HStack>
               </Link>
@@ -325,12 +338,21 @@ export default function App() {
           >
             <chakra.h1
               mb={3}
-              fontSize={{ base: "4xl", md: "5xl" }}
-              fontWeight={{ base: "bold", md: "extrabold" }}
+              fontSize={{ base: "3xl", md: "5xl" }}
+              fontWeight={{ base: "bold", md: "bold" }}
               color={useColorModeValue("gray.900", "gray.100")}
               lineHeight="shorter"
             >
-              Find the total floor value of your OpenSea portfolio
+              Get an estimated value of your NFT Portfolio on  <Text
+                ml={3}
+                display={{ base: "block", lg: "inline" }}
+                w="full"
+                bgClip="text"
+                color="brand.500"
+                fontWeight="bold"
+                >
+            OpenSea
+          </Text>
             </chakra.h1>
             <SimpleGrid
               as="form"
@@ -365,10 +387,14 @@ export default function App() {
                 Go
               </Button>
             </SimpleGrid>
+            
           </Box>
+          
         </Box>
 
       </Flex>
+      {portfolio &&
+        portfolio.length > 0 && (
       <Flex justifyContent="space-between"
         shadow="xl"
         maxW={960}
@@ -377,33 +403,89 @@ export default function App() {
         mx="auto"
         borderRadius={15}
       >
-        <HStack spacing={3} display={{ base: "none", md: "inline-flex" }}>
-          <chakra.h1
-            mb={3}
+        <HStack spacing={3} display={{ base: "inline-flex", md: "inline-flex" }}>
+          <chakra.h1 
             fontSize={{ base: "1xl", md: "2xl" }}
             fontWeight={{ base: "bold", md: "extrabold" }}
             color={useColorModeValue("gray.900", "gray.100")}
             lineHeight="shorter"
           >
-            Net {usdworth} USD
-          </chakra.h1>
-        </HStack>
-        <HStack
-          spacing={3}
-          display={mobileNav.isOpen ? "none" : "flex"}
-          alignItems="center"
-        >
-          <chakra.h1
-            mb={3}
+            <Icon as={FaBars} w="6" h="6" color="brand.500" mr="2" /> 
+           {networth} 
+           <Text
+            ml={3}
+            display={{ base: "block", lg: "inline" }}
+            w="full"
+            bgClip="text"
+            color="brand.500"
+            fontWeight="extrabold"
+            >
+            ETH
+          </Text>
+          </chakra.h1> 
+          <chakra.h1 
             fontSize={{ base: "1xl", md: "2xl" }}
             fontWeight={{ base: "bold", md: "extrabold" }}
             color={useColorModeValue("gray.900", "gray.100")}
             lineHeight="shorter"
-          >
-            Net {networth} ETH
+          > 
+            <Icon as={FaDollarSign} w="6" h="6" color="brand.500" mr="2" /> 
+           {usdworth} 
+           <Text
+            ml={3}
+            display={{ base: "block", lg: "inline" }}
+            w="full"
+            bgClip="text"
+            color="brand.500"
+            fontWeight="extrabold"
+            >
+            USD
+          </Text> 
           </chakra.h1>
         </HStack>
-      </Flex>
+        <HStack spacing={3} display={{ base: "inline-flex", md: "inline-flex" }}>
+          <chakra.h4  
+            fontWeight={{ base: "bold", md: "extrabold" }}
+            color={useColorModeValue("gray.900", "gray.100")}
+            lineHeight="shorter"
+          >
+               Share your Portfolio Value
+               
+          </chakra.h4>
+          <Box
+                  display={{ base: "inline-flex", md: "inline-flex" }}
+                  alignItems="center"
+                  as="a"  
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  bg="blue.400" 
+                  px="1em" 
+                  rounded="md"
+                  fontSize="sm"
+                  color="white.800"
+                  outline="0"
+                  transition="all 0.3s"
+                  _hover={{
+                    bg: "gray.100",
+                    borderColor: "gray.300",
+                  }}
+                  _active={{
+                    borderColor: "gray.200",
+                  }}
+                  _focus={{
+                    boxShadow: "outline",
+                  }} 
+                >
+                <TwitterShareButton url={socialConfig.config.url}
+                title={getTitle(networth,usdworth)} >
+                  <span className="icon">
+                    <Icon as={FaTwitter} w="6" h="6" color="white.400" mr="2" /> 
+                  </span>
+                  <span className="text">Twitter</span>
+                </TwitterShareButton>
+                </Box>
+        </HStack>
+      </Flex>)}
 
       {portfolio &&
         portfolio.length > 0 &&
@@ -482,6 +564,33 @@ export default function App() {
             </SimpleGrid>
           </Box>))}
 
+          <Box  m={'auto'} pt={20}>
+            <a href="https://twitter.com/coffeejunkienft">
+                <chakra.p 
+                maxW="2xl"
+                fontSize="xl" 
+                m={{ lg: "auto" }}
+                color={useColorModeValue("white.500", "gray.400")}
+              >
+                <Icon as={FaFire} w="4" h="4" color="red.500" mr="2" />
+                  Check out the Coffee Junkie Club NFT Project Out.
+                <Icon as={FaCoffee} w="4" h="4" color="brown.500" mr="2" />
+              </chakra.p>
+            </a>
+
+        <Container
+          as={Stack}
+          maxW={'2xl'}
+          py={4}
+          spacing={4}
+          justify={'center'}
+          align={'center'}>
+          <Text 
+          alignContent="center"
+          justifyContent="center">Made with Love by @livingpixelated. If you have any suggestions drop a message on 
+            Twitter and if you enjoy the website please share it.</Text> 
+        </Container> 
+      </Box>     
           <Box
           mb={0}
       bg={useColorModeValue('gray.50', 'gray.900')}
@@ -516,15 +625,9 @@ export default function App() {
           align={{ base: 'center', md: 'center' }}>
           <Text>© 2020 ElloInc. All rights reserved</Text>
           <Stack direction={'row'} spacing={6}>
-            <SocialButton label={'Twitter'} href={'#'}>
+            <SocialButton label={'Twitter'} href={'https://twitter.com/livingpixelated'}>
               <FaTwitter />
-            </SocialButton>
-            <SocialButton label={'YouTube'} href={'#'}>
-              <FaYoutube />
-            </SocialButton>
-            <SocialButton label={'Instagram'} href={'#'}>
-              <FaInstagram />
-            </SocialButton>
+            </SocialButton> 
           </Stack>
         </Container>
       </Box>
