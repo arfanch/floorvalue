@@ -23,7 +23,7 @@ const config = {
   useSystemColorMode: false,
   fonts: {
     heading: "Poppins",
-    body: "Poppins",
+    body: "Open Sans",
   },
 };
 

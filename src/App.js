@@ -310,36 +310,27 @@ export default function App() {
                 onClick={toggleMode}
                 icon={<SwitchIcon />}
               />
-              {SponsorButton}
-              <IconButton
-                display={{ base: "flex", md: "none" }}
-                aria-label="Open menu"
-                fontSize="20px"
-                color={useColorModeValue("gray.800", "inherit")}
-                variant="ghost"
-                icon={<AiOutlineMenu />}
-                onClick={mobileNav.onOpen}
-              />
+              {SponsorButton} 
             </Flex>
-          </Flex>
-          {MobileNavContent}
+          </Flex> 
         </chakra.div>
       </chakra.header>
       <Flex
         p={5}
         justifyContent="center"
         alignItems="center"
+       
       >
         <Box px={4} py={2} mx="auto">
           <Box
             w={{ base: "full", md: 11 / 12, xl: 8 / 12 }}
-            textAlign={{ base: "left", md: "center" }}
+            textAlign={{ base: "center", md: "center" }}
             mx="auto"
           >
             <chakra.h1
               mb={3}
-              fontSize={{ base: "3xl", md: "5xl" }}
-              fontWeight={{ base: "bold", md: "bold" }}
+              fontSize={{ base: "3xl", md: "5xl" }} 
+              pt={{ base: 150, md:150 }}
               color={useColorModeValue("gray.900", "gray.100")}
               lineHeight="shorter"
             >
@@ -348,11 +339,13 @@ export default function App() {
                 display={{ base: "block", lg: "inline" }}
                 w="full"
                 bgClip="text"
-                color="brand.500"
+                color="white.500" 
+                textDecoration="underline"
+                textDecorationColor="red.500"
                 fontWeight="bold"
                 >
-            OpenSea
-          </Text>
+                  OpenSea
+              </Text>
             </chakra.h1>
             <SimpleGrid
               as="form"
@@ -395,32 +388,36 @@ export default function App() {
       </Flex>
       {portfolio &&
         portfolio.length > 0 && (
-      <Flex justifyContent="space-between"
+      <Flex justifyContent="space-between" 
         shadow="xl"
-        maxW={960}
+        maxW={1960}
         px={8}
         py={5}
         mx="auto"
         borderRadius={15}
       >
-        <HStack spacing={3} display={{ base: "inline-flex", md: "inline-flex" }}>
+        <SimpleGrid 
+              maxW={1960} 
+              mx={{ base: "auto", md: "inline-flex" }}
+              columns={{ base: 2, lg: 2 }}
+              spacingY={{ base: 2, lg: 2 }}
+              spacingX={{ base: 2, lg: 2 }}
+              display={{ base: "flow", md: "inline-flex" }}
+            >
+        <HStack  display={{ base: "inline-flex", md: "inline-flex" }}>
           <chakra.h1 
             fontSize={{ base: "1xl", md: "2xl" }}
             fontWeight={{ base: "bold", md: "extrabold" }}
-            color={useColorModeValue("gray.900", "gray.100")}
+            color={useColorModeValue("gray.900", "gray.100")} 
+            display={{ base: "inline-flex", md: "inline-flex" }}
             lineHeight="shorter"
           >
-            <Icon as={FaBars} w="6" h="6" color="brand.500" mr="2" /> 
+            <Icon as={FaBars} w="6" h="6" color="brand.500" mr="2" mt={{ base: "0", md: "1" }} /> 
            {networth} 
-           <Text
-            ml={3}
-            display={{ base: "block", lg: "inline" }}
-            w="full"
-            bgClip="text"
+           <Text px={2}
             color="brand.500"
             fontWeight="extrabold"
-            >
-            ETH
+            > ETH
           </Text>
           </chakra.h1> 
           <chakra.h1 
@@ -428,22 +425,19 @@ export default function App() {
             fontWeight={{ base: "bold", md: "extrabold" }}
             color={useColorModeValue("gray.900", "gray.100")}
             lineHeight="shorter"
+            display={{ base: "inline-flex", md: "inline-flex" }}
           > 
-            <Icon as={FaDollarSign} w="6" h="6" color="brand.500" mr="2" /> 
+            <Icon as={FaDollarSign} w="6" h="6" color="brand.500" mr="2"  mt={{ base: "0", md: "1" }}/> 
            {usdworth} 
-           <Text
-            ml={3}
-            display={{ base: "block", lg: "inline" }}
-            w="full"
-            bgClip="text"
+           <Text px={2}
             color="brand.500"
             fontWeight="extrabold"
-            >
+            > 
             USD
           </Text> 
           </chakra.h1>
         </HStack>
-        <HStack spacing={3} display={{ base: "inline-flex", md: "inline-flex" }}>
+        <HStack mx={{base: "0", md: "20"}}>
           <chakra.h4  
             fontWeight={{ base: "bold", md: "extrabold" }}
             color={useColorModeValue("gray.900", "gray.100")}
@@ -485,6 +479,7 @@ export default function App() {
                 </TwitterShareButton>
                 </Box>
         </HStack>
+        </SimpleGrid>
       </Flex>)}
 
       {portfolio &&
@@ -503,7 +498,7 @@ export default function App() {
               mb={3}
               fontSize={{ base: "1xl", md: "2xl" }}
               fontWeight="extrabold"
-              textAlign={{ base: "center", sm: "left" }}
+              textAlign={{ base: "center", sm: "center" }}
               lineHeight="shorter"
               letterSpacing="tight"
             >
@@ -511,11 +506,13 @@ export default function App() {
             </chakra.h2>
             <SimpleGrid
               alignItems="center"
+              alignSelf="center"
+              justifyContent="center"
               columns={{ base: 1, lg: 4 }}
               spacingY={{ base: 3, lg: 8 }}
               spacingX={{ base: 3, lg: 8 }}
             >
-              <Box alignSelf="start">
+              <Box alignSelf="center">
                 <Image src={item.imageurl} />
               </Box>
               <GridItem colSpan={3}>
@@ -564,13 +561,13 @@ export default function App() {
             </SimpleGrid>
           </Box>))}
 
-          <Box  m={'auto'} pt={20}>
+          <Box  m={'auto'} pt={20} textAlign={{ base: "center", md: "center" }}
+>
             <a href="https://twitter.com/coffeejunkienft">
                 <chakra.p 
                 maxW="2xl"
-                fontSize="xl" 
-                m={{ lg: "auto" }}
-                color={useColorModeValue("white.500", "gray.400")}
+                fontSize="md" 
+                m={{ lg: "auto" }} 
               >
                 <Icon as={FaFire} w="4" h="4" color="red.500" mr="2" />
                   Check out the Coffee Junkie Club NFT Project Out.
@@ -585,10 +582,22 @@ export default function App() {
           spacing={4}
           justify={'center'}
           align={'center'}>
-          <Text 
-          alignContent="center"
-          justifyContent="center">Made with Love by @livingpixelated. If you have any suggestions drop a message on 
-            Twitter and if you enjoy the website please share it.</Text> 
+             <a href="https://twitter.com/coffeejunkienft">
+                <chakra.p 
+                maxW="2xl"
+                fontSize="sm" 
+                m={{ lg: "auto" }} 
+              >
+                  <Text 
+                maxW="2xl"
+                fontSize="sm" 
+                m={{ lg: "auto" }}
+                >Made with <Icon as={FaHeart} w="4" h="4" color="red.500" mr="2" /> 
+                  
+                  by @livingpixelated. If you have any suggestions drop a message on 
+                    Twitter and if you enjoy the website please share it.</Text> 
+                </chakra.p>
+            </a>
         </Container> 
       </Box>     
           
