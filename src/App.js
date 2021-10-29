@@ -568,7 +568,7 @@ export default function App() {
                 m={{ lg: "auto" }} 
               >
                 <Icon as={FaFire} w="4" h="4" color="red.500" mr="2" />
-                  Check out the Coffee Junkie Club NFT Project.
+                Join the Coffee Junkie Club.
                 <Icon as={FaCoffee} w="4" h="4" color="brown.500" mr="2" />
               </chakra.p>
             </a>
